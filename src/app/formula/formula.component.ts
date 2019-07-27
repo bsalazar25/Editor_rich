@@ -2,7 +2,10 @@ import { Component } from '@angular/core'
 
 import Quill from 'quill'
 
-import ImageResize from 'quill-image-resize-module'
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import ImageResize from 'quill-image-resize-module';
+import 'quill-emoji/dist/quill-emoji.js';
 Quill.register('modules/imageResize', ImageResize)
 
 @Component({
@@ -11,13 +14,29 @@ Quill.register('modules/imageResize', ImageResize)
 })
 export class FormulaComponent {
 
+  form: FormGroup = this.fb.group({
+    html: new FormControl('')
+  })
+
   modules = {}
-  constructor() {
+  constructor(private sanitizer: DomSanitizer, private fb: FormBuilder) {
     this.modules = {
       formula: true,
       imageResize: {},
       syntax: true,
-      toolbar: [['formula'], ['image'], ['code-block']]
+      'emoji-toolbar': true,
+      'emoji-shortname': true,
+      toolbar: [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'color': [] }, { 'background': [] }],
+        ['link', 'image', 'video'],
+        ['clean'],
+        ['formula'],
+        ['blockquote', 'code-block'], ['emoji']
+      ]
     }
   }
 
@@ -36,6 +55,10 @@ export class FormulaComponent {
       // tslint:disable-next-line:no-console
       console.log('KEYBINDING SHIFT + B', range, context)
     })
+  }
+
+  byPassHTML(html: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(html)
   }
 
 }

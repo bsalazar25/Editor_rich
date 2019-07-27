@@ -1,4 +1,6 @@
 import { Component } from '@angular/core'
+import { DomSanitizer } from '@angular/platform-browser';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-default',
@@ -7,6 +9,17 @@ import { Component } from '@angular/core'
 export class DefaultComponent {
   blured = false
   focused = false
+
+
+  modules = {}
+  constructor(private sanitizer: DomSanitizer, private fb: FormBuilder) {
+    this.modules = {
+      formula: true,
+      imageResize: {},
+      syntax: true,
+      toolbar: [['formula'], ['image'], ['code-block']]
+    }
+  }
 
   created(event) {
     // tslint:disable-next-line:no-console
